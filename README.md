@@ -65,6 +65,7 @@ The following is a list of files needed to run this application. These are liste
 2. master.html
 
 ### Other Files
+These objects are created and maintained by application code as necessary.
 1. Sqlite database
 2. Cleaned data table
 3. ML Model - pickle file
