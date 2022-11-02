@@ -104,24 +104,27 @@ def save_data(df, database_filepath):
 
 def main():
     if len(sys.argv) == 4:
-
+        # Accept input parameters from the command line
         messages_filepath, categories_filepath, database_filepath = sys.argv[1:]
 
         print('Loading data...\n    MESSAGES: {}\n    CATEGORIES: {}'
               .format(messages_filepath, categories_filepath))
+              
+        # Invoke load_data to read data from filenames provided
         df = load_data(messages_filepath, categories_filepath)
 
+        # Clean data into df data frame
         print('Cleaning data...')
         df = clean_data(df)
         
-        print(f'df.shape={df.shape}\n{df.head()}')
-        
+        # Save cleansed data into database
         print('Saving data...\n    DATABASE: {}'.format(database_filepath))
         save_data(df, database_filepath)
         
         print('Cleaned data saved to database!')
     
     else:
+        # Throw informative message when user provides incomplete information
         print('Please provide the filepaths of the messages and categories '\
               'datasets as the first and second argument respectively, as '\
               'well as the filepath of the database to save the cleaned data '\

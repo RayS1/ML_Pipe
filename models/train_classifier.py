@@ -19,7 +19,6 @@ from sklearn.multioutput import MultiOutputClassifier
 from sklearn.svm import LinearSVC
 
 import re
-#import time
 import pickle
 
 nltk.download('punkt')
@@ -39,7 +38,7 @@ lemmatizer = WordNetLemmatizer()
 
 def load_data(database_filepath):
     """
-    Muthod to load data from sqlite database.
+    Method to load data from sqlite database.
     Inputs:
     - database_filepath: file specification of the database file
     Returns:
@@ -90,6 +89,10 @@ def tokenize(text):
 def build_model():
     """
     Method to determine optimal model from pipeline and parameters
+    Inputs: 
+    - None
+    Returns:
+    - Optimal model returned by Grid Search
     """
 
     # Create a pipeline using LinearSVC as classifier
@@ -120,6 +123,18 @@ def build_model():
 
 def evaluate_model(model, X_test, y_test, category_names):
     """
+    Method to evaluate a machine learning model
+    Inputs:
+    - model - machine learning model 
+    - X_test - X matrix for testing
+    - y_test - y matrix for testing
+    - category_names - multi-classification category names
+    Returns:
+    - None
+    Prints:
+    - Best parameter information
+    - Classification Report for various categories
+    - Accuracy score
     """
     
     print("\nInfo: Best parameters:", model.best_params_, "\n\n")
@@ -141,6 +156,12 @@ def evaluate_model(model, X_test, y_test, category_names):
 
 def save_model(model, model_filepath):
     """
+    Method saves the model as a pickle file
+    Inputs:
+    - model - machine learning model
+    - model_filepath - filepath where the machine learning model will be stored as pickle file
+    Returns:
+    - None
     """
     
     # Save model as a pickle file
@@ -183,6 +204,7 @@ def main():
         print('Trained model saved!')
 
     else:
+        # Print informative message when user does not provide enough information
         print('Please provide the filepath of the disaster messages database '\
               'as the first argument and the filepath of the pickle file to '\
               'save the model to as the second argument. \n\nExample: python '\
