@@ -1,4 +1,3 @@
-# Import libraries
 import json
 import plotly
 import numpy as np
@@ -13,9 +12,9 @@ from plotly.graph_objs import Bar
 from sklearn.externals import joblib
 from sqlalchemy import create_engine
 
+
 app = Flask(__name__)
 
-# Function to tokenize an input string
 def tokenize(text):
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
@@ -34,13 +33,16 @@ df = pd.read_sql_table('disaster_response_clean', engine)
 # load model
 model = joblib.load("../models/classifier.pkl")
 
-
 # index webpage displays cool visuals and receives user input text for model
 @app.route('/')
 @app.route('/index')
 def index():
     
     # extract data needed for visuals
+    
+    # TODO: Below is an example - modify to extract data for your own visuals
+    genre_counts = df.groupby('genre').count()['message']
+    genre_names = list(genre_counts.index)
 
     # Initialize lists
     category_names = []
@@ -48,39 +50,60 @@ def index():
 
     # Append lists for each new category
     for column_name in df.columns[4:]:
-        category_names.append(column_name)
+        category_names.append(column_name.replace('_', ' '))
         count_false = df[column_name].value_counts()[0]
         count_true = df[column_name].value_counts()[1]
         category_percents.append(
             round((count_false - count_true) /
                   (count_false + count_true) * 100)
-        )
-
+        ) 
+      
     # Create dataframe
-    categories_df = pd.DataFrame({'catagory_name': category_names,
-                                  'category_percent': category_percents})
+    categories_df = pd.DataFrame({'category_name': category_names,
+                                 'category_percent': category_percents})
     
-    categories_df = categories_df.sort_values(by='category_percent', ascending=False)
+    categories_df['category_percent'].astype(int)
+    
+    categories_df.sort_values(by='category_percent', ascending=False, inplace=True)
                       
     graphs = [
         {
             'data': [
                 Bar(
-                    x=category_names,
-                    y=category_percents
+                    x=categories_df.category_name,
+                    y=categories_df.category_percent
                 )
             ],
 
             'layout': {
-                'title': 'Category-wise Imbalance % <br>(Unflagged - Flagged) / Total',
+                'title': 'Category Imbalance Plot<br>(Unflagged Count - Flagged Count) / Total Count',
                 'yaxis': {
-                    'title': "Imbalance Percentage(%)"
+                    'title': "Imbalance Percentage (%)"
                 },
                 'xaxis': {
-                    'title': "Category Name"
+                    'title': "Category"
+                }
+            }
+        },
+        {
+            'data': [
+                Bar(
+                    x=genre_names,
+                    y=genre_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Message Genres',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Genre"
                 }
             }
         }
+
     ]
     
     # encode plotly graphs in JSON
