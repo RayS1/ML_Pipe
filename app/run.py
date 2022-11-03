@@ -1,5 +1,7 @@
+# Import libraries
 import json
 import plotly
+import numpy as np
 import pandas as pd
 
 from nltk.stem import WordNetLemmatizer
@@ -11,9 +13,9 @@ from plotly.graph_objs import Bar
 from sklearn.externals import joblib
 from sqlalchemy import create_engine
 
-
 app = Flask(__name__)
 
+# Function to tokenize an input string
 def tokenize(text):
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
@@ -39,28 +41,43 @@ model = joblib.load("../models/classifier.pkl")
 def index():
     
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
-    genre_counts = df.groupby('genre').count()['message']
-    genre_names = list(genre_counts.index)
+
+    # Initialize lists
+    category_names = []
+    category_percents = []
+
+    # Append lists for each new category
+    for column_name in df.columns[4:]:
+        category_names.append(column_name)
+        count_false = df[column_name].value_counts()[0]
+        count_true = df[column_name].value_counts()[1]
+        category_percents.append(
+            round((count_false - count_true) /
+                  (count_false + count_true) * 100)
+        )
+
+    # Create dataframe
+    categories_df = pd.DataFrame({'catagory_name': category_names,
+                                  'category_percent': category_percents})
     
-    # create visuals
-    # TODO: Below is an example - modify to create your own visuals
+    categories_df = categories_df.sort_values(by='category_percent', ascending=False)
+                      
     graphs = [
         {
             'data': [
                 Bar(
-                    x=genre_names,
-                    y=genre_counts
+                    x=category_names,
+                    y=category_percents
                 )
             ],
 
             'layout': {
-                'title': 'Distribution of Message Genres',
+                'title': 'Category-wise Imbalance % <br>(Unflagged - Flagged) / Total',
                 'yaxis': {
-                    'title': "Count"
+                    'title': "Imbalance Percentage(%)"
                 },
                 'xaxis': {
-                    'title': "Genre"
+                    'title': "Category Name"
                 }
             }
         }

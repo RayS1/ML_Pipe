@@ -6,8 +6,10 @@
 2. [Instructions](#instructions)
 3. [Requirements](#requirements)
 4. [File Descriptions](#files)
-5. [Licensing, Authors, and Acknowledgements](#licensing)
-6. [References](#references)
+5. [Data Issues](#issues)
+6. [Data Cleaning](#cleaning)
+7. [Licensing, Authors, and Acknowledgements](#licensing)
+8. [References](#references)
 
 ## Project Description <a name="project"></a>
 
@@ -49,26 +51,57 @@ For this project few Python libraries have been used. Their version numbers are:
 
 ## File Description <a name="files"></a>
 
-The following is a list of files needed to run this application. These are listed under various categories:
+The following is a list of files needed to run this application. These are organized into folders as shown below:
+
+### Organization of files
+- app
+| - template
+| | - master.html
+| | - go.html
+| - run.py
+|
+- data
+| - disaster_messages.csv
+| - disaster_categories.csv
+| - process_data.py
+| - DisasterResponse.db
+|
+- models
+| - train_classifier.py
+| - classifier.pkl
+|
+- README.md
 
 ### Data files
 1. disaster_messages.csv - contains disaster relief messages 
 2. disaster_categories.csv - contains categories for disaster_message file contents
 
 ### Python scripts
-1. process_data.py - 
-2. train_classifier.py - 
-3. run.py - 
+1. process_data.py - ETL pipeline for disaster_messages.csv and disaster_categories.csv data
+2. train_classifier.py - ML pipeline for producing classifier machine learning model
+3. run.py - Flask application for supporting information displayed on the user interface
 
 ### html Files
-1. go.html
-2. master.html
+1. go.html - component of html based user interface used in rendering information
+2. master.html - component of html based user interface having navigation bar and other visual components
 
 ### Other Files
-These objects are created and maintained by application code as necessary.
-1. Sqlite database
-2. Cleaned data table
-3. ML Model - pickle file
+These objects are created and maintained by application code as necessary. Typical names are provided below.
+1. Sqlite database database such as DisasterResponse.db
+2. Cleaned data table such as disaster_response_clean
+3. ML Model - pickle file such as classifier.pkl
+
+## Data Issues <a name="issues"></a>
+During Exploratory Data Analysis (EDA) of the input data sets, the following issues were observed:
+1. Category "related" had three values, 0, 1, and 2 even though all other categories were binary (0, 1)
+2. Category "child_alone" had a value of 0 only with no predictability for this category
+3. Degree of imbalance varied between categories with many of them having low representation of positive occurrence (value 1)
+
+## Data Cleaning <a name="cleaning"></a>
+1. "related" category value of 2 was replaced by value 1
+2. "child_alone" category was dropped
+3. Imbalance of categories were analyzed to detect categories that are most affected by imbalance. An over sampling strategy is suitable for addressing these high imbalances.
+
 
 ## Licensing, Authors, Acknowledgements <a name="licensing"></a>
 Must give credit to Figure8 for the Disaster response data. If you use this work, you must acknowledge it too. Otherwise, feel free to use the code here as you would like!
